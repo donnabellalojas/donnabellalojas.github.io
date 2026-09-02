@@ -45,14 +45,52 @@ function openCart(){
 function setupHero(){
   const track=$('#heroTrack'); if(!track)return;
   let i=0; const slides=[...track.children],dots=$('#heroDots');
-  const go=x=>{i=(x+slides.length)%slides.length;track.style.transform=`translate3d(-${i*100}%,0,0)`;$$('.hero-dot',dots).forEach((d,k)=>d.classList.toggle('active',k===i));slides.forEach((s,k)=>s.setAttribute('aria-hidden',k===i?'false':'true'));};
+  const go=x=>{
+    i=(x+slides.length)%slides.length;
+    track.style.transform=`translate3d(-${i*100}%,0,0)`;
+    $$('.hero-dot',dots).forEach((d,k)=>d.classList.toggle('active',k===i));
+    slides.forEach((s,k)=>{
+      s.setAttribute('aria-hidden',k===i?'false':'true');
+      const vid=s.querySelector('.hero-video');
+      if(vid){ if(k===i){ vid.currentTime=0; vid.play().catch(()=>{}); } else { vid.pause(); } }
+    });
+  };
   slides.forEach((_,x)=>{let b=document.createElement('button');b.type='button';b.className='hero-dot'+(x===0?' active':'');b.setAttribute('aria-label','Ir para slide '+(x+1));b.onclick=()=>go(x);dots?.appendChild(b);});
   $('#heroPrev')?.addEventListener('click',()=>go(i-1)); $('#heroNext')?.addEventListener('click',()=>go(i+1));
   let timer=setInterval(()=>go(i+1),6500); track.parentElement?.addEventListener('mouseenter',()=>clearInterval(timer)); track.parentElement?.addEventListener('mouseleave',()=>timer=setInterval(()=>go(i+1),6500));
-  const v=$('.hero-video'); v?.play().catch(()=>{});
+  go(0);
 }
 function setupCountdown(){
-  $$('[data-deadline]').forEach(el=>{const end=new Date(el.dataset.deadline).getTime();const tick=()=>{let t=Math.max(0,end-Date.now()),s=Math.floor(t/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60; $('[data-d]',el).textContent=String(d).padStart(2,'0');$('[data-h]',el).textContent=String(h).padStart(2,'0');$('[data-m]',el).textContent=String(m).padStart(2,'0');$('[data-s]',el).textContent=String(s).padStart(2,'0');};tick();setInterval(tick,1000);});
+  $$('[data-rolling-24h]').forEach(el=>{
+    const CYCLE=24*3600*1000;
+    let end=Number(localStorage.getItem('db_countdown_end')||0);
+    if(!end||end<Date.now()){ end=Date.now()+CYCLE; localStorage.setItem('db_countdown_end',end); }
+    const tick=()=>{
+      let now=Date.now();
+      if(end<=now){ while(end<=now) end+=CYCLE; localStorage.setItem('db_countdown_end',end); }
+      let s=Math.max(0,Math.floor((end-now)/1000)),h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;
+      $('[data-h]',el).textContent=String(h).padStart(2,'0');$('[data-m]',el).textContent=String(m).padStart(2,'0');$('[data-s]',el).textContent=String(s).padStart(2,'0');
+    };
+    tick();setInterval(tick,1000);
+  });
+  // compat: ainda soporta cronômetros antigos com data-deadline fixo, se algum ficar no site
+  $$('[data-deadline]').forEach(el=>{const end=new Date(el.dataset.deadline).getTime();const tick=()=>{let t=Math.max(0,end-Date.now()),s=Math.floor(t/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60; $('[data-d]',el)&&($('[data-d]',el).textContent=String(d).padStart(2,'0'));$('[data-h]',el).textContent=String(h).padStart(2,'0');$('[data-m]',el).textContent=String(m).padStart(2,'0');$('[data-s]',el).textContent=String(s).padStart(2,'0');};tick();setInterval(tick,1000);});
+}
+function getFavs(){try{return JSON.parse(localStorage.getItem('db_favs')||'[]')}catch{return[]}}
+function saveFavs(f){localStorage.setItem('db_favs',JSON.stringify(f));}
+function isFav(name){return getFavs().includes(name);}
+function toggleFav(name){let f=getFavs();if(f.includes(name))f=f.filter(x=>x!==name);else f.push(name);saveFavs(f);}
+function setupFavorites(){
+  $$('[data-fav]').forEach(btn=>{
+    const name=btn.dataset.fav;
+    btn.classList.toggle('active',isFav(name));
+    btn.addEventListener('click',(e)=>{
+      e.preventDefault();e.stopPropagation();
+      toggleFav(name);
+      btn.classList.toggle('active');
+      toast(isFav(name)?'Adicionado aos favoritos.':'Removido dos favoritos.');
+    });
+  });
 }
 function setupSearch(){
  const sp=$('#searchPanel'),si=$('#searchInput');$('#searchToggle')?.addEventListener('click',()=>{sp?.classList.toggle('open');si?.focus()});
@@ -82,5 +120,5 @@ function setupGlobal(){
  $$('img').forEach(img=>img.addEventListener('error',()=>img.classList.add('img-missing')));
  updateCart();
 }
-document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupReviews();setupNewsletter();setupTrend();});
+document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();});
 window.DB_SOCIAL_LINKS=DB.socials;
