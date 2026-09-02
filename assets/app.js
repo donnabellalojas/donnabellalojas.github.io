@@ -113,6 +113,76 @@ function setupNewsletter(){
 function setupTrend(){
  $$('[data-trend]').forEach(b=>b.addEventListener('click',()=>$('#trendTrack')?.scrollBy({left:b.dataset.trend==='next'?320:-320,behavior:'smooth'})));
 }
+function setupLiveChat(){
+  if(document.getElementById('liveChatBadge')) return;
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`
+    <button class="live-chat-badge" id="liveChatBadge" aria-label="Abrir chat DonnaBella">
+      <span class="lcb-mark">Donna<b>Bella</b></span>
+      <span class="live-chat-dot" id="liveChatDot"></span>
+    </button>
+    <div class="live-chat-tooltip" id="liveChatTooltip">
+      <button class="lct-close" id="liveChatTooltipClose" aria-label="Fechar">×</button>
+      <b>DonnaBella</b>
+      Olá, tudo bem por aí? Estou por aqui para ajudar na sua escolha. 💚
+    </div>
+    <div class="live-chat-panel" id="liveChatPanel">
+      <div class="lcp-head">
+        <span class="lcp-title">DonnaBella<small>Normalmente responde em minutos</small></span>
+        <button id="liveChatClose" aria-label="Fechar chat">×</button>
+      </div>
+      <div class="lcp-body">
+        <div class="lcp-msg">Olá! Sou o canal de atendimento da DonnaBella. Escolha uma opção abaixo ou fale direto com nossa equipe pelo WhatsApp.</div>
+        <div class="lcp-quick">
+          <button type="button" data-lc-action="whatsapp">Falar no WhatsApp agora</button>
+          <button type="button" data-lc-action="colecoes">Ver categorias de produtos</button>
+          <button type="button" data-lc-action="pedidos">Acompanhar meu pedido</button>
+          <button type="button" data-lc-action="cupons">Ver cupons disponíveis</button>
+        </div>
+      </div>
+      <form class="lcp-foot" id="liveChatForm">
+        <input type="text" id="liveChatInput" placeholder="Escreva sua mensagem…" maxlength="300">
+        <button type="submit" aria-label="Enviar">➤</button>
+      </form>
+    </div>`;
+  document.body.appendChild(wrap);
+
+  const badge=$('#liveChatBadge'),tooltip=$('#liveChatTooltip'),panel=$('#liveChatPanel'),dot=$('#liveChatDot');
+  const openPanel=()=>{panel.classList.add('open');tooltip.classList.remove('open');dot.style.display='none';};
+  const closePanel=()=>panel.classList.remove('open');
+  badge.addEventListener('click',()=>{ panel.classList.contains('open') ? closePanel() : openPanel(); });
+  $('#liveChatClose').addEventListener('click',closePanel);
+  $('#liveChatTooltipClose').addEventListener('click',(e)=>{e.stopPropagation();tooltip.classList.remove('open');});
+  tooltip.addEventListener('click',openPanel);
+
+  if(!sessionStorage.getItem('db_chat_greeted')){
+    setTimeout(()=>{ if(!panel.classList.contains('open')) tooltip.classList.add('open'); sessionStorage.setItem('db_chat_greeted','1'); },2200);
+  } else { dot.style.display='none'; }
+
+  $$('[data-lc-action]',panel).forEach(b=>b.addEventListener('click',()=>{
+    const a=b.dataset.lcAction;
+    if(a==='whatsapp') window.open(DB.whatsapp,'_blank');
+    else if(a==='colecoes') window.location.href='index.html#colecoes';
+    else if(a==='pedidos') window.location.href='pedidos.html';
+    else if(a==='cupons'){ closePanel(); openCoupons(); }
+  }));
+
+  $('#liveChatForm').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const input=$('#liveChatInput'); const text=input.value.trim(); if(!text)return;
+    const body=$('.lcp-body',panel);
+    const userMsg=document.createElement('div');
+    userMsg.className='lcp-msg'; userMsg.style.background='var(--green)'; userMsg.style.color='#fff'; userMsg.style.marginLeft='30px';
+    userMsg.textContent=text;
+    body.appendChild(userMsg);
+    const reply=document.createElement('div');
+    reply.className='lcp-msg';
+    reply.textContent='Obrigada pela mensagem! Nossa equipe confirma esse tipo de dúvida com mais detalhe pelo WhatsApp — toque em "Falar no WhatsApp agora" acima para continuar por lá.';
+    body.appendChild(reply);
+    body.scrollTop=body.scrollHeight;
+    input.value='';
+  });
+}
 function setupGlobal(){
  $$('[data-drawer-open]').forEach(b=>b.onclick=openDrawer);$$('[data-drawer-close]').forEach(b=>b.onclick=closeDrawer);$('#drawerOverlay')?.addEventListener('click',closeDrawer);
  $$('[data-orders-open]').forEach(b=>b.addEventListener('click',openOrders));$$('[data-coupons-open]').forEach(b=>b.addEventListener('click',openCoupons));
@@ -120,5 +190,5 @@ function setupGlobal(){
  $$('img').forEach(img=>img.addEventListener('error',()=>img.classList.add('img-missing')));
  updateCart();
 }
-document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();});
+document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();});
 window.DB_SOCIAL_LINKS=DB.socials;
