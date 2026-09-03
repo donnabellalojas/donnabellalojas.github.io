@@ -33,7 +33,8 @@ function renderOrders(){
 }
 function openOrders(){modal(`<p class="eyebrow">Minha DonnaBella</p><h2>Pedidos feitos</h2><div>${renderOrders()}</div>`);closeDrawer();}
 function openCoupons(){
-  modal(`<p class="eyebrow">Benefícios DonnaBella</p><h2>10 cupons disponíveis</h2><p class="muted">Todos os códigos abaixo ficam disponíveis até <b>${DB.couponDeadline}</b>. Toque em um código para copiar.</p><div class="coupon-grid">${DB.coupons.map(([c,d])=>`<button type="button" class="coupon-card" data-copy="${c}"><b>${c}</b><span>${d}% OFF</span><small>válido até ${DB.couponDeadline}</small></button>`).join('')}</div>`);
+  let saved=[];try{saved=JSON.parse(localStorage.getItem('db_saved_coupons')||'[]')}catch{}
+  modal(`<p class="eyebrow">Benefícios DonnaBella</p><h2>10 cupons disponíveis</h2><p class="muted">Todos os códigos abaixo ficam disponíveis até <b>${DB.couponDeadline}</b>. Toque em um código para copiar.</p><div class="coupon-grid">${DB.coupons.map(([c,d])=>`<button type="button" class="coupon-card" data-copy="${c}"><b>${c}</b><span>${d}% OFF</span><small>${saved.includes(c)?'★ guardado no mini jogo':'válido até '+DB.couponDeadline}</small></button>`).join('')}</div>`);
   closeDrawer();
   $$('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.querySelector('small').textContent='Código copiado ✓';}catch{b.querySelector('small').textContent='Código: '+b.dataset.copy;}b.classList.add('copied');});
 }
@@ -311,6 +312,63 @@ function setupShowcases(){
   $$('.dbx-carousel').forEach(setupDbxCarousel);
   $$('.riviera-rows').forEach(setupRiviera);
 }
+function setupMinigame(){
+  const btn=$('#mgSpinBtn'); if(!btn) return;
+  const wheel=$('#mgWheel'), shelf=$('#mgShelf'), hand=$('#mgHand'), ticket=$('#mgTicket'), msg=$('#mgMessage');
+  const codeEl=$('#mgCouponCode'), textEl=$('#mgMsgText');
+  let rotation=0, spinning=false;
+
+  function resetScene(){
+    $$('.mg-bag',shelf).forEach(b=>b.classList.remove('active'));
+    hand.classList.remove('show'); hand.classList.add('retreat');
+    ticket.classList.remove('show');
+    msg.classList.remove('show');
+  }
+
+  btn.addEventListener('click',()=>{
+    if(spinning) return;
+    spinning=true; btn.disabled=true; resetScene();
+    const n=1+Math.floor(Math.random()*10);
+    const segAngle=36, target=(n-1)*segAngle+segAngle/2;
+    const spins=6*360;
+    const currentMod=((rotation%360)+360)%360;
+    let delta=(spins - ((currentMod+target)%360));
+    if(delta<=0) delta+=360;
+    rotation+=delta;
+    wheel.style.transform=`rotate(${rotation}deg)`;
+
+    const onWheelDone=()=>{
+      wheel.removeEventListener('transitionend',onWheelDone);
+      const bag=$(`.mg-bag[data-bag="${n}"]`,shelf);
+      bag?.classList.add('active');
+      setTimeout(()=>{
+        hand.classList.remove('retreat'); hand.classList.add('show');
+        ticket.classList.add('show');
+        setTimeout(()=>{
+          hand.classList.remove('show'); hand.classList.add('retreat');
+          const [code,pct]=DB.coupons[n-1];
+          codeEl.textContent=code;
+          textEl.textContent=`Parabéns! A sacola número ${n} era a sua.`;
+          msg.dataset.code=code;
+          msg.classList.add('show');
+          spinning=false; btn.disabled=false;
+        },850);
+      },1150);
+    };
+    wheel.addEventListener('transitionend',onWheelDone);
+  });
+
+  $('#mgUseCoupon')?.addEventListener('click',()=>{
+    const code=msg.dataset.code||'';
+    window.location.href='todos-produtos.html'+(code?('?cupom='+encodeURIComponent(code)):'');
+  });
+  $('#mgSaveCoupon')?.addEventListener('click',()=>{
+    const code=msg.dataset.code; if(!code) return;
+    let saved=JSON.parse(localStorage.getItem('db_saved_coupons')||'[]');
+    if(!saved.includes(code)){ saved.push(code); localStorage.setItem('db_saved_coupons',JSON.stringify(saved)); }
+    toast('Cupom guardado! Veja em Cupons disponíveis.');
+  });
+}
 function setupGlobal(){
  $$('[data-drawer-open]').forEach(b=>b.onclick=openDrawer);$$('[data-drawer-close]').forEach(b=>b.onclick=closeDrawer);$('#drawerOverlay')?.addEventListener('click',closeDrawer);
  $$('[data-orders-open]').forEach(b=>b.addEventListener('click',openOrders));$$('[data-coupons-open]').forEach(b=>b.addEventListener('click',openCoupons));
@@ -318,5 +376,5 @@ function setupGlobal(){
  $$('img').forEach(img=>img.addEventListener('error',()=>img.classList.add('img-missing')));
  updateCart();
 }
-document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();setupProductPage();setupPagination();setupBrandIntro();setupShowcases();});
+document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();setupProductPage();setupPagination();setupBrandIntro();setupShowcases();setupMinigame();});
 window.DB_SOCIAL_LINKS=DB.socials;

@@ -47,7 +47,118 @@
 <div class="trend-card"><div class="trend-media"><button class="fav-btn" type="button" data-fav="Produto em alta 04" aria-label="Favoritar Produto em alta 04"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-10-9.2C.4 8 2 4 6 4c2.2 0 3.8 1.3 6 4 2.2-2.7 3.8-4 6-4 4 0 5.6 4 4 7.8C19.5 16.3 12 21 12 21z"/></svg></button><img src="assets/img/em-alta-4.jpg" alt="Produto em alta 4"><span>em-alta-4.jpg</span></div><p>Seleção 04</p><h3>Produto em alta</h3><b data-price="79.90">R$ 79,90</b><button class="btn btn-gold btn-small" data-add-product data-name="Produto em alta 04" data-price="79.90">Adicionar</button></div>
 </div><button class="trend-arrow" data-trend="next">›</button></div></div></section>
 
-<section class="wrap section-pad" id="joias"><div class="section-head"><p class="eyebrow">Precificador DonnaBella</p><h2>Veja o valor com 60% OFF.</h2><p>Insira o valor original e veja o preço promocional e a referência em 12 parcelas.</p></div><div class="price-tool"><label>Valor original (R$)<input id="priceInput" type="number" min="0" step="0.01" placeholder="199,90"></label><div class="price-result"><span>Preço com 60% OFF</span><strong id="discountedPrice">R$ 0,00</strong><span>Referência em 12x</span><strong id="installmentPrice">R$ 0,00</strong></div></div></section>
+
+
+<section class="minigame-section" id="mini-jogos"><div class="minigame-inner">
+<div class="mg-left">
+<p class="mg-eyebrow">Mini Jogos DonnaBella</p>
+<h2 class="mg-title">Gire a roleta, ganhe seu cupom.</h2>
+<p class="mg-copy">Uma sacola especial está esperando por você nas nossas prateleiras. Gire a roleta, descubra qual delas é sua e receba um cupom exclusivo na hora.</p>
+<button type="button" class="mg-spin-btn" id="mgSpinBtn">Gire Agora, Donna</button>
+<div class="mg-result" id="mgResult">
+  <div class="mg-message" id="mgMessage">
+    <p id="mgMsgText">Parabéns! Encontramos sua sacola.</p>
+    <span class="mg-coupon-code" id="mgCouponCode">DONNA10</span>
+    <p id="mgMsgSub" style="margin-top:6px;color:#5b5540;font-size:12px">Obrigada por jogar com a gente ✦</p>
+    <div class="mg-msg-actions">
+      <button type="button" class="use" id="mgUseCoupon">Usar cupom</button>
+      <button type="button" class="save" id="mgSaveCoupon">Guardar cupom</button>
+    </div>
+    <div class="mg-msg-logo">DonnaBella</div>
+  </div>
+</div>
+</div>
+<div class="mg-scene">
+  <div class="mg-wheel-wrap">
+    <div class="mg-wheel-pointer"></div>
+    <div class="mg-wheel" id="mgWheel"><svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><path d="M150,150 L150.0,0.0 A150,150 0 0,1 238.2,28.6 Z" fill="#9ACD32"/><text x="181.5" y="53.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(18 181.5 53.0)">1</text><path d="M150,150 L238.2,28.6 A150,150 0 0,1 292.7,103.6 Z" fill="#7FA82A"/><text x="232.5" y="90.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(54 232.5 90.0)">2</text><path d="M150,150 L292.7,103.6 A150,150 0 0,1 292.7,196.4 Z" fill="#9ACD32"/><text x="252.0" y="150.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(90 252.0 150.0)">3</text><path d="M150,150 L292.7,196.4 A150,150 0 0,1 238.2,271.4 Z" fill="#7FA82A"/><text x="232.5" y="210.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(126 232.5 210.0)">4</text><path d="M150,150 L238.2,271.4 A150,150 0 0,1 150.0,300.0 Z" fill="#9ACD32"/><text x="181.5" y="247.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(162 181.5 247.0)">5</text><path d="M150,150 L150.0,300.0 A150,150 0 0,1 61.8,271.4 Z" fill="#7FA82A"/><text x="118.5" y="247.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(198 118.5 247.0)">6</text><path d="M150,150 L61.8,271.4 A150,150 0 0,1 7.3,196.4 Z" fill="#9ACD32"/><text x="67.5" y="210.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(234 67.5 210.0)">7</text><path d="M150,150 L7.3,196.4 A150,150 0 0,1 7.3,103.6 Z" fill="#7FA82A"/><text x="48.0" y="150.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(270 48.0 150.0)">8</text><path d="M150,150 L7.3,103.6 A150,150 0 0,1 61.8,28.6 Z" fill="#9ACD32"/><text x="67.5" y="90.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(306 67.5 90.0)">9</text><path d="M150,150 L61.8,28.6 A150,150 0 0,1 150.0,0.0 Z" fill="#7FA82A"/><text x="118.5" y="53.0" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-weight="700" font-size="20" fill="#fffdf7" transform="rotate(342 118.5 53.0)">10</text></svg></div>
+    <div class="mg-wheel-hub">Donna<br>Bella</div>
+  </div>
+  <div class="mg-shelf">
+    <div class="mg-shelf-grid" id="mgShelf"><div class="mg-bag" data-bag="1"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">1</text>
+</svg></div><div class="mg-bag" data-bag="2"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">2</text>
+</svg></div><div class="mg-bag" data-bag="3"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">3</text>
+</svg></div><div class="mg-bag" data-bag="4"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">4</text>
+</svg></div><div class="mg-bag" data-bag="5"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">5</text>
+</svg></div><div class="mg-bag" data-bag="6"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">6</text>
+</svg></div><div class="mg-bag" data-bag="7"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">7</text>
+</svg></div><div class="mg-bag" data-bag="8"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">8</text>
+</svg></div><div class="mg-bag" data-bag="9"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">9</text>
+</svg></div><div class="mg-bag" data-bag="10"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 30c0-10 6-18 18-18s18 8 18 18" fill="none" stroke="#fff" stroke-width="3"/>
+<rect x="14" y="28" width="52" height="42" rx="4" fill="#16371f"/>
+<path d="M14 34c14 6 38 6 52 0" fill="none" stroke="#0e2415" stroke-width="1"/>
+<text x="40" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" fill="#fff" font-weight="700">DonnaBella</text>
+<circle cx="66" cy="24" r="10" fill="#cfa856"/>
+<text x="66" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" fill="#16210f" font-weight="700">10</text>
+</svg></div></div>
+  </div>
+  <div class="mg-hand" id="mgHand"><svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 118c-14 0-22-10-22-24V60c0-4 3-7 7-7s7 3 7 7v14" fill="#e9c9a6"/>
+<path d="M42 74V30c0-4 3-7 7-7s7 3 7 7v34" fill="#e9c9a6"/>
+<path d="M56 74V24c0-4 3-7 7-7s7 3 7 7v50" fill="#e9c9a6"/>
+<path d="M70 74V32c0-4 3-7 7-7s7 3 7 7v42" fill="#e9c9a6"/>
+<path d="M28 94V50c0-4 3-7 7-7s7 3 7 7v20" fill="#e9c9a6"/>
+<path d="M22 96c0 14 10 22 24 22h8c12 0 20-8 20-20V70" fill="#e9c9a6"/>
+<path d="M20 118c6-30 4-40 4-40" fill="none" stroke="#16371f" stroke-width="10" stroke-linecap="round"/>
+</svg></div>
+  <div class="mg-ticket" id="mgTicket"><svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="58" height="34" rx="3" fill="#fffdf7" stroke="#cfa856" stroke-width="1.5" stroke-dasharray="3 3"/><text x="30" y="22" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" fill="#16371f" font-weight="700">CUPOM</text></svg></div>
+</div>
+</div></section>
 
 <section class="dbx-section wrap" id="pura-sofisticacao">
 <h2 class="dbx-title">Pura Sofisticação</h2>
