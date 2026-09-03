@@ -11,7 +11,9 @@ const DB={
     {id:'oculos-sunset-bella',name:'Óculos Sunset Bella',price:69.90,oldPrice:289.90,category:'Óculos',img:'assets/img/oculos-sunset-bella-1.jpg',desc:'Armação em acetato translúcido rosé com ferragem dourada. Lentes polarizadas, com proteção UV400 e UVB.',material:'Acetato translúcido rosé, ferragem dourada, lentes polarizadas',care:'Guarde no case ao não usar. Limpe as lentes apenas com pano de microfibra seco ou levemente umedecido.',url:'produto-oculos-sunset-bella.html'},
     {id:'brinco-coracao',name:'Brinco Coração',price:59.90,category:'Brincos',img:'assets/img/brinco-coracao.jpg',desc:'Brinco de pressão em formato de coração, cravejado com cristais. Peça delicada, com fecho seguro para uso diário.',material:'Metal folheado, cristais',care:'Evite contato com perfume e água em excesso. Guarde em local seco.'},
     {id:'brinco-bella-02',name:'Brinco Bella 02',price:79.90,category:'Brincos',img:'assets/img/brinco-2.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
-    {id:'brinco-signature-03',name:'Brinco Signature 03',price:99.90,category:'Brincos',img:'assets/img/brinco-3.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''}
+    {id:'brinco-signature-03',name:'Brinco Signature 03',price:99.90,category:'Brincos',img:'assets/img/brinco-3.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
+    {id:'colar-classica',name:'Colar Clássica',price:48.90,category:'Colares',img:'assets/img/gargantilha-cristais.jpg',desc:'Colar da linha Clássica, cristais lapidados em corrente delicada. Peça atemporal para uso diário ou ocasiões especiais.',material:'Metal folheado, cristais lapidados',care:'Evite contato com perfume e água em excesso. Guarde em local seco, separado de outras peças.'},
+    {id:'pingente-classica',name:'Pingente Clássica',price:29.99,category:'Colares',img:'assets/img/pingente-classica.jpg',desc:'Pingente da linha Clássica, para compor com correntes DonnaBella ou usar com a sua própria.',material:'Metal folheado',care:'Evite contato com perfume e água em excesso. Guarde em local seco.'}
   ]
 };
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -288,6 +290,27 @@ function setupBrandIntro(){
   check();
   window.addEventListener('scroll',check,{passive:true});
 }
+function setupDbxCarousel(el){
+  const groupsWrap=$('.dbx-groups',el); const groups=$$('.dbx-group',el);
+  const dotsWrap=$('.dbx-dots',el);
+  let i=0;
+  groups.forEach((_,x)=>{const d=document.createElement('button');d.type='button';d.className='dbx-dot'+(x===0?' active':'');d.setAttribute('aria-label','Grupo '+(x+1));d.onclick=()=>go(x);dotsWrap?.appendChild(d);});
+  const go=x=>{ i=(x+groups.length)%groups.length; groupsWrap.style.transform=`translateX(-${i*100}%)`; $$('.dbx-dot',dotsWrap).forEach((d,k)=>d.classList.toggle('active',k===i)); };
+  $('.dbx-nav.prev',el)?.addEventListener('click',()=>go(i-1));
+  $('.dbx-nav.next',el)?.addEventListener('click',()=>go(i+1));
+}
+function setupRiviera(el){
+  const rows=$$('.riviera-row-inner',el);
+  let i=0; const step=238; const maxSteps=Math.max(0,(rows[0]?$$('.riviera-card',rows[0]).length:0)-3);
+  const go=x=>{ i=Math.max(0,Math.min(maxSteps,x)); rows.forEach((r,ri)=>{ r.style.transform=`translateX(-${i*step+(ri%2?26:0)}px)`; }); };
+  $('.dbx-nav.prev',el)?.addEventListener('click',()=>go(i-1));
+  $('.dbx-nav.next',el)?.addEventListener('click',()=>go(i+1));
+  go(0);
+}
+function setupShowcases(){
+  $$('.dbx-carousel').forEach(setupDbxCarousel);
+  $$('.riviera-rows').forEach(setupRiviera);
+}
 function setupGlobal(){
  $$('[data-drawer-open]').forEach(b=>b.onclick=openDrawer);$$('[data-drawer-close]').forEach(b=>b.onclick=closeDrawer);$('#drawerOverlay')?.addEventListener('click',closeDrawer);
  $$('[data-orders-open]').forEach(b=>b.addEventListener('click',openOrders));$$('[data-coupons-open]').forEach(b=>b.addEventListener('click',openCoupons));
@@ -295,5 +318,5 @@ function setupGlobal(){
  $$('img').forEach(img=>img.addEventListener('error',()=>img.classList.add('img-missing')));
  updateCart();
 }
-document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();setupProductPage();setupPagination();setupBrandIntro();});
+document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();setupProductPage();setupPagination();setupBrandIntro();setupShowcases();});
 window.DB_SOCIAL_LINKS=DB.socials;
