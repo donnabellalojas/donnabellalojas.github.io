@@ -6,7 +6,13 @@ const DB={
     instagram:'https://www.instagram.com/amodonnabella?igsh=YXNvNWd6cWNpeDZ6&utm_source=qr',
     tiktok:'https://www.tiktok.com/@amodonnabella?_r=1',
     facebook:''
-  }
+  },
+  products:[
+    {id:'oculos-sunset-bella',name:'Óculos Sunset Bella',price:69.90,oldPrice:289.90,category:'Óculos',img:'assets/img/oculos-sunset-bella-1.jpg',desc:'Armação em acetato translúcido rosé com ferragem dourada. Lentes polarizadas, com proteção UV400 e UVB.',material:'Acetato translúcido rosé, ferragem dourada, lentes polarizadas',care:'Guarde no case ao não usar. Limpe as lentes apenas com pano de microfibra seco ou levemente umedecido.',url:'produto-oculos-sunset-bella.html'},
+    {id:'brinco-coracao',name:'Brinco Coração',price:59.90,category:'Brincos',img:'assets/img/brinco-coracao.jpg',desc:'Brinco de pressão em formato de coração, cravejado com cristais. Peça delicada, com fecho seguro para uso diário.',material:'Metal folheado, cristais',care:'Evite contato com perfume e água em excesso. Guarde em local seco.'},
+    {id:'brinco-bella-02',name:'Brinco Bella 02',price:79.90,category:'Brincos',img:'assets/img/brinco-2.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
+    {id:'brinco-signature-03',name:'Brinco Signature 03',price:99.90,category:'Brincos',img:'assets/img/brinco-3.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''}
+  ]
 };
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
@@ -183,6 +189,105 @@ function setupLiveChat(){
     input.value='';
   });
 }
+function getProductById(id){return DB.products.find(p=>p.id===id);}
+function applyCoupon(code,price){
+  const found=DB.coupons.find(([c])=>c.toUpperCase()===String(code).trim().toUpperCase());
+  if(!found) return null;
+  const [,pct]=found; return {pct,newPrice:Math.round(price*(1-pct/100)*100)/100};
+}
+function setupProductPage(){
+  const mount=$('#productPage'); if(!mount) return;
+  const id=new URLSearchParams(location.search).get('id');
+  const p=id&&getProductById(id);
+  if(!p){
+    mount.innerHTML=`<div class="pd-notfound"><div class="empty-mark">Donna</div><h2>Produto não encontrado.</h2><p class="muted">Esse item pode ter sido removido ou o link está incorreto.</p><a class="btn btn-dark" href="index.html#colecoes">Ver coleções</a></div>`;
+    return;
+  }
+  document.title=p.name+' | DonnaBella';
+  $('#crumbCategory')&&($('#crumbCategory').textContent=p.category||'Produto');
+  const off=p.oldPrice?Math.round((1-p.price/p.oldPrice)*100):null;
+  mount.innerHTML=`<div class="pd-grid">
+    <div class="pd-media">${off?`<span class="pd-badge-off">-${off}% OFF</span>`:''}<img src="${p.img}" alt="${escapeHTML(p.name)}"></div>
+    <div class="pd-info">
+      <p class="eyebrow">${escapeHTML(p.category||'DonnaBella')}</p>
+      <h1>${escapeHTML(p.name)}</h1>
+      <div class="pd-price-row">${p.oldPrice?`<span class="pd-old-price">${money(p.oldPrice)}</span>`:''}<span class="pd-price">${money(p.price)}</span></div>
+      <p class="pd-desc">${escapeHTML(p.desc||'Cadastre a descrição deste produto.')}</p>
+      ${p.material?`<div class="pd-spec"><b>Material</b><span>${escapeHTML(p.material)}</span></div>`:''}
+      ${p.care?`<div class="pd-spec"><b>Cuidados</b><span>${escapeHTML(p.care)}</span></div>`:''}
+      <div class="pd-actions">
+        <button class="btn btn-gold" id="pdBuyNow" type="button">Comprar agora</button>
+        <button class="btn btn-dark" id="pdAddCart" type="button">Adicionar à sacola</button>
+        <button class="fav-btn pd-fav-inline" type="button" data-fav="${escapeHTML(p.name)}" aria-label="Favoritar ${escapeHTML(p.name)}"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-10-9.2C.4 8 2 4 6 4c2.2 0 3.8 1.3 6 4 2.2-2.7 3.8-4 6-4 4 0 5.6 4 4 7.8C19.5 16.3 12 21 12 21z"/></svg></button>
+      </div>
+      <div class="pd-coupon">
+        <p>Tenho um cupom</p>
+        <div class="pd-coupon-row"><input id="pdCouponInput" placeholder="Ex: DONNA10" maxlength="20"><button id="pdCouponBtn" type="button">Aplicar</button></div>
+        <div class="pd-coupon-msg" id="pdCouponMsg"></div>
+      </div>
+    </div>
+  </div>`;
+
+  $('#pdAddCart').addEventListener('click',()=>{
+    let c=getCart(),it=c.find(x=>x.name===p.name);
+    if(it)it.qty++; else c.push({name:p.name,price:p.price,qty:1});
+    saveCart(c); toast('Adicionado à sacola.');
+  });
+  $('#pdBuyNow').addEventListener('click',()=>{
+    let c=getCart(),it=c.find(x=>x.name===p.name);
+    if(it)it.qty++; else c.push({name:p.name,price:p.price,qty:1});
+    saveCart(c); openCart();
+  });
+  $('#pdCouponBtn').addEventListener('click',()=>{
+    const val=$('#pdCouponInput').value; const msg=$('#pdCouponMsg');
+    const res=applyCoupon(val,p.price);
+    if(res){ msg.className='pd-coupon-msg ok'; msg.textContent=`Cupom válido: -${res.pct}% • novo valor ${money(res.newPrice)}`; }
+    else { msg.className='pd-coupon-msg err'; msg.textContent='Cupom inválido ou expirado.'; }
+  });
+
+  setupFavorites();
+}
+function setupPagination(){
+  $$('.collection-grid[data-paginate]').forEach(grid=>{
+    const perPage=Number(grid.dataset.paginate)||10;
+    const cards=$$('.collection-card',grid);
+    const pages=Math.ceil(cards.length/perPage);
+    const pager=grid.nextElementSibling && grid.nextElementSibling.hasAttribute('data-pager') ? grid.nextElementSibling : null;
+    let current=1;
+    const render=()=>{
+      cards.forEach((c,i)=>c.classList.toggle('pg-active', i>=(current-1)*perPage && i<current*perPage));
+      if(!pager) return;
+      let btns=`<button type="button" class="pager-arrow" data-pg="prev" ${current===1?'disabled':''}>‹</button>`;
+      for(let p=1;p<=pages;p++) btns+=`<button type="button" class="${p===current?'active':''}" data-pg="${p}">${p}</button>`;
+      btns+=`<button type="button" class="pager-arrow" data-pg="next" ${current===pages?'disabled':''}>›</button>`;
+      pager.innerHTML=btns;
+      $$('[data-pg]',pager).forEach(b=>b.addEventListener('click',()=>{
+        const v=b.dataset.pg;
+        if(v==='prev') current=Math.max(1,current-1);
+        else if(v==='next') current=Math.min(pages,current+1);
+        else current=Number(v);
+        render();
+        grid.scrollIntoView({behavior:'smooth',block:'start'});
+      }));
+    };
+    render();
+  });
+}
+function setupBrandIntro(){
+  const intro=$('#brandIntro'); const header=$('.site-header');
+  if(!intro) return;
+  let collapsed=false;
+  const check=()=>{
+    const should=window.scrollY>60;
+    if(should!==collapsed){
+      collapsed=should;
+      intro.classList.toggle('collapsed',collapsed);
+      header?.classList.toggle('docked',collapsed);
+    }
+  };
+  check();
+  window.addEventListener('scroll',check,{passive:true});
+}
 function setupGlobal(){
  $$('[data-drawer-open]').forEach(b=>b.onclick=openDrawer);$$('[data-drawer-close]').forEach(b=>b.onclick=closeDrawer);$('#drawerOverlay')?.addEventListener('click',closeDrawer);
  $$('[data-orders-open]').forEach(b=>b.addEventListener('click',openOrders));$$('[data-coupons-open]').forEach(b=>b.addEventListener('click',openCoupons));
@@ -190,5 +295,5 @@ function setupGlobal(){
  $$('img').forEach(img=>img.addEventListener('error',()=>img.classList.add('img-missing')));
  updateCart();
 }
-document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();});
+document.addEventListener('DOMContentLoaded',()=>{setupGlobal();setupHero();setupCountdown();setupSearch();setupCartAndProducts();setupFavorites();setupReviews();setupNewsletter();setupTrend();setupLiveChat();setupProductPage();setupPagination();setupBrandIntro();});
 window.DB_SOCIAL_LINKS=DB.socials;

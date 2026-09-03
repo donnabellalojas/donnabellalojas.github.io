@@ -46,3 +46,65 @@ html{scroll-behavior:smooth}.hero-track{transition:transform .7s cubic-bezier(.2
 .lcp-foot input:focus{border-color:var(--gold)}
 .lcp-foot button{border:0;background:var(--gold);color:var(--green);width:34px;height:34px;border-radius:50%;font-size:13px;flex-shrink:0}
 @media(max-width:600px){.live-chat-badge{right:14px;bottom:14px;width:52px;height:52px}.live-chat-tooltip{right:14px;bottom:78px;max-width:220px}.live-chat-panel{right:10px;left:10px;width:auto;bottom:14px}}
+.breadcrumb{font-size:11.5px;color:var(--muted);margin-bottom:26px;letter-spacing:.03em}
+.breadcrumb a{color:var(--muted)}.breadcrumb a:hover{color:var(--gold)}
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:flex-start}
+@media(max-width:860px){.pd-grid{grid-template-columns:1fr;gap:28px}}
+.pd-media{position:relative;border-radius:3px;overflow:hidden;background:var(--bg);aspect-ratio:4/5}
+.pd-media img{width:100%;height:100%;object-fit:cover;display:block}
+.pd-badge-off{position:absolute;top:14px;left:14px;background:var(--green);color:var(--gold2);font-size:11px;letter-spacing:.06em;padding:6px 12px;border-radius:20px}
+.pd-info .eyebrow{margin-bottom:6px}
+.pd-info h1{font-size:clamp(28px,3.6vw,40px);margin-bottom:10px}
+.pd-price-row{display:flex;align-items:baseline;gap:12px;margin:14px 0 6px}
+.pd-price{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:30px}
+.pd-old-price{color:var(--muted);text-decoration:line-through;font-size:15px}
+.pd-desc{color:var(--muted);line-height:1.8;font-size:14px;margin:18px 0}
+.pd-spec{border-top:1px solid var(--line);padding:12px 0;font-size:13px;display:flex;gap:10px}
+.pd-spec b{color:var(--green);min-width:110px;font-weight:600}
+.pd-actions{display:flex;gap:10px;margin:22px 0 8px;flex-wrap:wrap}
+.pd-actions .btn{flex:1;min-width:150px;justify-content:center}
+.pd-fav-inline{position:static;width:44px;height:44px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);background:transparent}
+.pd-fav-inline svg{stroke:var(--green)}
+.pd-fav-inline.active svg{fill:#c0304f;stroke:#c0304f}
+.pd-coupon{margin-top:26px;border:1px dashed var(--gold);border-radius:3px;padding:16px}
+.pd-coupon p{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.pd-coupon-row{display:flex;gap:8px}
+.pd-coupon-row input{flex:1;border:1px solid var(--line);border-radius:20px;padding:10px 14px;font-size:12.5px;outline:0;text-transform:uppercase}
+.pd-coupon-row input:focus{border-color:var(--gold)}
+.pd-coupon-row button{border:1px solid var(--green);background:transparent;color:var(--green);border-radius:20px;padding:0 18px;font-size:12px;white-space:nowrap}
+.pd-coupon-row button:hover{background:var(--green);color:#fff}
+.pd-coupon-msg{margin-top:10px;font-size:12.5px}
+.pd-coupon-msg.ok{color:#2f6b3f}.pd-coupon-msg.err{color:#b03050}
+.pd-notfound{text-align:center;padding:60px 0}
+.collection-card.is-placeholder{opacity:.72}
+.collection-card.is-placeholder .collection-media{background:repeating-linear-gradient(135deg,var(--bg) 0 12px,var(--paper) 12px 24px);display:flex;align-items:center;justify-content:center;border:1px dashed var(--line)}
+.collection-card.is-placeholder .ph-num{font-family:'Playfair Display',serif;font-size:44px;color:var(--gold);opacity:.55}
+.collection-card.is-placeholder h3{color:var(--muted);font-size:22px}
+.collection-card.is-placeholder button[disabled]{opacity:.55;cursor:not-allowed}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:46px;flex-wrap:wrap}
+.pager button{width:38px;height:38px;border-radius:2px;border:1px solid var(--line);background:var(--paper);color:var(--green);font-size:12.5px}
+.pager button.active{background:var(--green);border-color:var(--green);color:#fff}
+.pager button.pager-arrow{border:1px solid var(--gold);color:var(--gold);background:transparent;font-size:14px}
+.collection-grid[data-paginate] .collection-card{display:none}
+.collection-grid[data-paginate] .collection-card.pg-active{display:flex;flex-direction:column}
+.buy-cat-section{padding:90px 0;text-align:center}
+.buy-cat-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(28px,3.4vw,40px);color:var(--ink);margin-bottom:44px}
+.buy-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:left}
+@media(max-width:900px){.buy-cat-grid{grid-template-columns:repeat(2,1fr)}}
+.buy-cat-tile{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:4/5;display:flex;align-items:flex-end;background:linear-gradient(145deg,#243927,#8a7136)}
+.buy-cat-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.buy-cat-tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,14,8,0) 40%,rgba(6,14,8,.78) 100%)}
+.buy-cat-tile span{position:relative;z-index:1;color:#fff;font-family:'Playfair Display',serif;font-size:17px;padding:16px}
+.buy-cat-tile:hover{transform:translateY(-3px)}
+.site-header .logo span{color:var(--green)}
+.site-header .logo{transition:transform .5s var(--ease)}
+.site-header.docked .logo{transform:scale(1.04)}
+.brand-intro{background:var(--bg);text-align:center;padding:58px 24px 46px;overflow:hidden;transition:max-height .6s var(--ease),opacity .45s var(--ease),padding .6s var(--ease);max-height:280px}
+.brand-intro.collapsed{max-height:0;padding-top:0;padding-bottom:0;opacity:0}
+.brand-intro-mark{font-family:'Playfair Display',serif;font-weight:800;font-size:clamp(48px,8.4vw,124px);color:var(--green);letter-spacing:.005em;margin:0;line-height:1}
+.brand-intro-mark span{color:var(--green)}
+.brand-intro-tag{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:14px}
+.nav-pill{border:1px solid var(--line);border-radius:20px;padding:7px 15px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);transition:.3s var(--ease);white-space:nowrap}
+.nav-pill:hover{background:var(--green);border-color:var(--green);color:#fff}
+.main-nav{flex-wrap:wrap}
+@media(max-width:1150px){.main-nav.pill-nav{display:none}}
