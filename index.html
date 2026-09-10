@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head><body>
-<div class="topbar"><div class="topbar-track"><span>✦ DonnaBella · Poder em cada detalhe</span><span>✦ Frete grátis acima de R$ 149</span><span>✦ Coleções selecionadas</span><span>✦ Atendimento ao cliente</span><span>✦ DonnaBella · Poder em cada detalhe</span><span>✦ Frete grátis acima de R$ 149</span><span>✦ Coleções selecionadas</span><span>✦ Atendimento ao cliente</span></div></div>
+<div class="topbar"><div class="topbar-track"><span>✦ DonnaBella · Poder em cada detalhe</span><span>✦ Frete grátis a partir de R$ 49,90</span><span>✦ Coleções selecionadas</span><span>✦ Atendimento ao cliente</span><span>✦ DonnaBella · Poder em cada detalhe</span><span>✦ Frete grátis a partir de R$ 49,90</span><span>✦ Coleções selecionadas</span><span>✦ Atendimento ao cliente</span></div></div>
 <header class="site-header"><div class="header-row">
 <div class="header-side"><button class="icon-btn" data-drawer-open aria-label="Abrir menu">☰</button><nav class="main-nav pill-nav"><a class="nav-pill" href="categoria-brincos.html">Brincos</a><a class="nav-pill" href="aneis.html">Anéis</a><a class="nav-pill" href="lacos.html">Laços</a><a class="nav-pill" href="colares.html">Colares</a><a class="nav-pill" href="pulseiras.html">Pulseiras</a><a class="nav-pill" href="pulseiras.html">Bracelete</a><a class="nav-pill" href="categoria-oculos.html">Óculos</a></nav></div>
 <a class="logo" href="index.html">Donna<span>Bella</span></a>
@@ -28,7 +28,7 @@
 
 <section class="countdown-strip" id="cupons"><div><span class="eyebrow">Condição especial</span><strong>Oferta relâmpago DonnaBella</strong></div><div class="countdown" data-rolling-24h><b data-h>00</b><span>h</span><b data-m>00</b><span>min</span><b data-s>00</b><span>seg</span></div><button class="btn btn-gold btn-small" data-coupons-open>Ver cupons</button></section>
 
-<section class="trust-strip"><div><b>Curadoria</b><span>Seleção DonnaBella</span></div><div><b>Experiência</b><span>Compra com atendimento</span></div><div><b>Estética</b><span>Luxo em cada detalhe</span></div><div><b>Envio</b><span>Frete grátis acima de R$ 149</span></div></section>
+<section class="trust-strip"><div><b>Curadoria</b><span>Seleção DonnaBella</span></div><div><b>Experiência</b><span>Compra com atendimento</span></div><div><b>Estética</b><span>Luxo em cada detalhe</span></div><div><b>Envio</b><span>Frete grátis a partir de R$ 49,90</span></div></section>
 
 <section class="wrap section-pad" id="colecoes"><div class="section-head"><p class="eyebrow">Coleções</p><h2>Escolha pelo seu estilo.</h2><p>Organizamos a experiência para que cada categoria tenha identidade própria — sem misturar produtos que deveriam ter seu próprio espaço.</p></div>
 <div class="collection-grid">
@@ -55,6 +55,11 @@
 <h2 class="mg-title">Gire a roleta, ganhe seu cupom.</h2>
 <p class="mg-copy">Uma sacola especial está esperando por você nas nossas prateleiras. Gire a roleta, descubra qual delas é sua e receba um cupom exclusivo na hora.</p>
 <button type="button" class="mg-spin-btn" id="mgSpinBtn">Gire Agora, Donna</button>
+<p id="mgStatus" style="margin-top:14px;font-size:12px;color:#5b5540;letter-spacing:.03em"></p>
+<div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+  <button type="button" id="mgShareBtn" style="border:1px solid var(--green);color:var(--green);background:transparent;border-radius:20px;padding:9px 18px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase">Compartilhar e ganhar giro</button>
+</div>
+<p id="mgShareMsg" style="margin-top:8px;font-size:11.5px;color:#5b5540;max-width:38ch;line-height:1.6"></p>
 <div class="mg-result" id="mgResult">
   <div class="mg-message" id="mgMessage">
     <p id="mgMsgText">Parabéns! Encontramos sua sacola.</p>

@@ -1,5 +1,10 @@
 const DB={
-  coupons:[['DONNA10',10],['BELLA10',10],['LUXO15',15],['PODER15',15],['EXCLUSIVA20',20],['BELLA20',20],['VIP25',25],['DONNA25',25],['OURO30',30],['DB60',60]],
+  coupons:[['DONNA10',10],['BELLA15',15],['LUXO20',20],['VIP40',40],['OURO60',60],['PREMIUM75',75],['RARA79',79],['RARA85',85],['EXCLUSIVA90',90]],
+  couponTiers:[
+    {label:'Comum',weight:90,coupons:[['DONNA10',10],['BELLA15',15],['LUXO20',20]]},
+    {label:'Raro',weight:9.9,coupons:[['VIP40',40],['OURO60',60],['PREMIUM75',75]]},
+    {label:'Ultra raro',weight:0.1,coupons:[['RARA79',79],['RARA85',85],['EXCLUSIVA90',90]]}
+  ],
   couponDeadline:'10/10/2026',
   whatsapp:'https://wa.me/message/NK42IOHQYX3LF1',
   socials:{
@@ -291,6 +296,15 @@ function setupBrandIntro(){
   check();
   window.addEventListener('scroll',check,{passive:true});
 }
+function addSwipe(el,onLeft,onRight){
+  let sx=0,sy=0,tracking=false;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;tracking=true;},{passive:true});
+  el.addEventListener('touchend',e=>{
+    if(!tracking) return; tracking=false;
+    const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>36 && Math.abs(dx)>Math.abs(dy)){ dx<0?onLeft():onRight(); }
+  },{passive:true});
+}
 function setupDbxCarousel(el){
   const groupsWrap=$('.dbx-groups',el); const groups=$$('.dbx-group',el);
   const dotsWrap=$('.dbx-dots',el);
@@ -299,6 +313,7 @@ function setupDbxCarousel(el){
   const go=x=>{ i=(x+groups.length)%groups.length; groupsWrap.style.transform=`translateX(-${i*100}%)`; $$('.dbx-dot',dotsWrap).forEach((d,k)=>d.classList.toggle('active',k===i)); };
   $('.dbx-nav.prev',el)?.addEventListener('click',()=>go(i-1));
   $('.dbx-nav.next',el)?.addEventListener('click',()=>go(i+1));
+  addSwipe(el,()=>go(i+1),()=>go(i-1));
 }
 function setupRiviera(el){
   const rows=$$('.riviera-row-inner',el);
@@ -306,17 +321,62 @@ function setupRiviera(el){
   const go=x=>{ i=Math.max(0,Math.min(maxSteps,x)); rows.forEach((r,ri)=>{ r.style.transform=`translateX(-${i*step+(ri%2?26:0)}px)`; }); };
   $('.dbx-nav.prev',el)?.addEventListener('click',()=>go(i-1));
   $('.dbx-nav.next',el)?.addEventListener('click',()=>go(i+1));
+  addSwipe(el,()=>go(i+1),()=>go(i-1));
   go(0);
 }
 function setupShowcases(){
-  $$('.dbx-carousel').forEach(setupDbxCarousel);
-  $$('.riviera-rows').forEach(setupRiviera);
+  $$('.dbx-section .dbx-carousel').forEach(setupDbxCarousel);
+  $$('.riviera-section .dbx-carousel').forEach(setupRiviera);
+}
+function rollWeightedCoupon(){
+  const r=Math.random()*100; let acc=0, tier=DB.couponTiers[0];
+  for(const t of DB.couponTiers){ acc+=t.weight; if(r<=acc){ tier=t; break; } }
+  return tier.coupons[Math.floor(Math.random()*tier.coupons.length)];
+}
+function getGameState(){
+  let s=Store.get('db_game',{nextAvailable:0,spinsLeft:1,sharesUsed:0});
+  if(Date.now()>=s.nextAvailable){ s={nextAvailable:0,spinsLeft:1,sharesUsed:0}; Store.set('db_game',s); }
+  return s;
+}
+function saveGameState(s){ Store.set('db_game',s); }
+function fmtRemaining(ms){
+  const s=Math.max(0,Math.floor(ms/1000)); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);
+  return `${h}h ${m}min`;
 }
 function setupMinigame(){
   const btn=$('#mgSpinBtn'); if(!btn) return;
   const wheel=$('#mgWheel'), shelf=$('#mgShelf'), hand=$('#mgHand'), ticket=$('#mgTicket'), msg=$('#mgMessage');
   const codeEl=$('#mgCouponCode'), textEl=$('#mgMsgText');
+  const statusEl=$('#mgStatus'), shareBtn=$('#mgShareBtn'), shareMsgEl=$('#mgShareMsg');
   let rotation=0, spinning=false;
+
+  function renderStatus(){
+    const s=getGameState();
+    if(s.spinsLeft>0){
+      statusEl.textContent=`Giros disponíveis hoje: ${s.spinsLeft}`;
+      btn.disabled=false;
+    } else {
+      statusEl.textContent=`Você já girou por hoje. Próximo giro em ${fmtRemaining(s.nextAvailable-Date.now())}.`;
+      btn.disabled=true;
+    }
+    shareMsgEl.textContent = s.sharesUsed<3
+      ? `Compartilhe e gire: cada compartilhamento vale +1 giro (restam ${3-s.sharesUsed} de 3).`
+      : `Limite de 3 compartilhamentos por dia atingido.`;
+    shareBtn.disabled = s.sharesUsed>=3;
+  }
+  renderStatus();
+  setInterval(renderStatus,30000);
+
+  shareBtn?.addEventListener('click',async()=>{
+    const s=getGameState(); if(s.sharesUsed>=3) return;
+    const shareData={title:'DonnaBella',text:'Descobri a DonnaBella e o mini jogo de cupons deles — dá uma olhada!',url:location.origin+location.pathname.replace(/index\.html$/,'')};
+    try{
+      if(navigator.share){ await navigator.share(shareData); }
+      else { await navigator.clipboard.writeText(shareData.url); toast('Link copiado! Envie para uma amiga.'); }
+      s.sharesUsed++; s.spinsLeft++; saveGameState(s); renderStatus();
+      toast('Giro extra liberado! 🎁');
+    }catch(e){ /* usuária cancelou o compartilhamento */ }
+  });
 
   function resetScene(){
     $$('.mg-bag',shelf).forEach(b=>b.classList.remove('active'));
@@ -327,6 +387,7 @@ function setupMinigame(){
 
   btn.addEventListener('click',()=>{
     if(spinning) return;
+    const s=getGameState(); if(s.spinsLeft<=0) return;
     spinning=true; btn.disabled=true; resetScene();
     const n=1+Math.floor(Math.random()*10);
     const segAngle=36, target=(n-1)*segAngle+segAngle/2;
@@ -346,12 +407,16 @@ function setupMinigame(){
         ticket.classList.add('show');
         setTimeout(()=>{
           hand.classList.remove('show'); hand.classList.add('retreat');
-          const [code,pct]=DB.coupons[n-1];
+          const [code,pct]=rollWeightedCoupon();
           codeEl.textContent=code;
-          textEl.textContent=`Parabéns! A sacola número ${n} era a sua.`;
+          textEl.textContent=`Parabéns! A sacola número ${n} trouxe um cupom surpresa.`;
           msg.dataset.code=code;
+          msg.querySelector('#mgMsgSub')&&(msg.querySelector('#mgMsgSub').textContent=`${pct}% OFF · obrigada por jogar com a gente ✦`);
           msg.classList.add('show');
-          spinning=false; btn.disabled=false;
+          const st=getGameState(); st.spinsLeft=Math.max(0,st.spinsLeft-1);
+          if(st.spinsLeft<=0) st.nextAvailable=Date.now()+24*3600*1000;
+          saveGameState(st); renderStatus();
+          spinning=false;
         },850);
       },1150);
     };
