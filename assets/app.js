@@ -1,11 +1,10 @@
 const DB={
-  coupons:[['DONNA10',10],['BELLA15',15],['LUXO20',20],['VIP40',40],['OURO60',60],['PREMIUM75',75],['RARA79',79],['RARA85',85],['EXCLUSIVA90',90]],
-  couponTiers:[
-    {label:'Comum',weight:90,coupons:[['DONNA10',10],['BELLA15',15],['LUXO20',20]]},
-    {label:'Raro',weight:9.9,coupons:[['VIP40',40],['OURO60',60],['PREMIUM75',75]]},
-    {label:'Ultra raro',weight:0.1,coupons:[['RARA79',79],['RARA85',85],['EXCLUSIVA90',90]]}
+  // Cadastro manual de cupons — adicione novos objetos aqui seguindo o mesmo formato.
+  // code: código exato (case-sensitive) · percent: desconto % · usage: 'once' (uso único por cliente/navegador) ou 'unlimited'
+  // validProducts: 'any' ou array de ids de produto · expires: 'DD/MM/AAAA' ou null
+  coupons:[
+    {code:'ANDREIA60',percent:60,usage:'once',validProducts:'any',expires:null}
   ],
-  couponDeadline:'10/10/2026',
   whatsapp:'https://wa.me/message/NK42IOHQYX3LF1',
   socials:{
     instagram:'https://www.instagram.com/amodonnabella?igsh=YXNvNWd6cWNpeDZ6&utm_source=qr',
@@ -38,24 +37,115 @@ function renderOrders(){
 }
 function openOrders(){modal(`<p class="eyebrow">Minha DonnaBella</p><h2>Pedidos feitos</h2><div>${renderOrders()}</div>`);closeDrawer();}
 function openCoupons(){
-  let saved=[];try{saved=JSON.parse(localStorage.getItem('db_saved_coupons')||'[]')}catch{}
-  modal(`<p class="eyebrow">Benefícios DonnaBella</p><h2>10 cupons disponíveis</h2><p class="muted">Todos os códigos abaixo ficam disponíveis até <b>${DB.couponDeadline}</b>. Toque em um código para copiar.</p><div class="coupon-grid">${DB.coupons.map(([c,d])=>`<button type="button" class="coupon-card" data-copy="${c}"><b>${c}</b><span>${d}% OFF</span><small>${saved.includes(c)?'★ guardado no mini jogo':'válido até '+DB.couponDeadline}</small></button>`).join('')}</div>`);
+  const used=getUsedCoupons();
+  modal(`<p class="eyebrow">Benefícios DonnaBella</p><h2>Cupons disponíveis</h2><p class="muted">Cadastrados manualmente pela loja. Toque em um código para copiar.</p><div class="coupon-grid">${DB.coupons.map(c=>{
+    const isUsed=c.usage==='once'&&used.includes(c.code);
+    return `<button type="button" class="coupon-card${isUsed?' coupon-used':''}" ${isUsed?'disabled':`data-copy="${c.code}"`}><b>${c.code}</b><span>${c.percent}% OFF</span><small>${isUsed?'Já utilizado neste navegador':(c.usage==='once'?'Uso único por cliente':'Uso ilimitado')}</small></button>`;
+  }).join('')}</div>`);
   closeDrawer();
   $$('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.querySelector('small').textContent='Código copiado ✓';}catch{b.querySelector('small').textContent='Código: '+b.dataset.copy;}b.classList.add('copied');});
 }
-function openCart(){
-  let c=getCart(),total=c.reduce((a,x)=>a+x.price*x.qty,0);
-  const body=c.length ? c.map(x=>`<div class="modal-line"><span>${escapeHTML(x.name)} × ${x.qty}</span><b>${money(x.price*x.qty)}</b></div>`).join('')+`<div class="modal-total"><span>Total</span><b>${money(total)}</b></div><button class="btn btn-gold" id="checkoutBtn" type="button">Finalizar pedido</button><a class="btn btn-dark" style="margin-top:10px" href="pedidos.html">Ver pedidos feitos</a>` : `<div class="empty-state"><div class="empty-mark">Donna</div><h3>Sua sacola está vazia.</h3><p>Escolha uma peça para começar.</p><a class="btn btn-dark" href="index.html#colecoes">Fazer pedido agora</a></div>`;
+function getUsedCoupons(){try{return JSON.parse(localStorage.getItem('db_used_coupons')||'[]')}catch{return[]}}
+function markCouponUsed(code){let u=getUsedCoupons();if(!u.includes(code)){u.push(code);localStorage.setItem('db_used_coupons',JSON.stringify(u));}}
+function isCouponUsed(code){return getUsedCoupons().includes(code);}
+function findCoupon(rawCode){
+  const code=String(rawCode||'').trim(); // exigência: código exato, case-sensitive
+  const c=DB.coupons.find(x=>x.code===code);
+  if(!c) return {ok:false,reason:'invalid'};
+  if(c.usage==='once' && isCouponUsed(c.code)) return {ok:false,reason:'used'};
+  if(c.expires){ const [d,m,y]=c.expires.split('/'); if(new Date(`${y}-${m}-${d}T23:59:59`)<new Date()) return {ok:false,reason:'expired'}; }
+  return {ok:true,coupon:c};
+}
+function getAppliedCoupon(){try{return JSON.parse(localStorage.getItem('db_applied_coupon')||'null')}catch{return null}}
+function setAppliedCoupon(v){ if(v) localStorage.setItem('db_applied_coupon',JSON.stringify(v)); else localStorage.removeItem('db_applied_coupon'); }
+
+let _pendingCoupon=null; // {code,percent} aguardando escolha do produto, quando o carrinho tem 2+ itens
+function cartCouponMsg(text,type){ return `<div class="coupon-msg ${type}">${escapeHTML(text)}</div>`; }
+
+function renderCartModal(){
+  let c=getCart(), applied=getAppliedCoupon();
+  if(applied && (applied.itemIndex==null || applied.itemIndex>=c.length || c[applied.itemIndex]?.name!==applied.itemName)){ setAppliedCoupon(null); applied=null; }
+
+  let total=0;
+  const lines=c.map((x,i)=>{
+    const lineBase=x.price*x.qty;
+    let lineFinal=lineBase, tag='';
+    if(applied && applied.itemIndex===i){
+      lineFinal=Math.round(lineBase*(1-applied.percent/100)*100)/100;
+      tag=`<span class="coupon-tag">${applied.code} · -${applied.percent}%</span>`;
+    }
+    total+=lineFinal;
+    return `<div class="modal-line"><span>${escapeHTML(x.name)} × ${x.qty}${tag}</span><b>${applied&&applied.itemIndex===i?`<s>${money(lineBase)}</s> `:''}${money(lineFinal)}</b></div>`;
+  }).join('');
+
+  let couponBlock='';
+  if(c.length){
+    if(_pendingCoupon && !applied){
+      couponBlock=`<div class="cart-coupon"><p class="cc-label">Cupom <b>${escapeHTML(_pendingCoupon.code)}</b> (${_pendingCoupon.percent}% OFF) — em qual produto deseja aplicar?</p>
+        <div class="coupon-pick">${c.map((x,i)=>`<label class="coupon-pick-item"><input type="radio" name="couponPick" value="${i}">${escapeHTML(x.name)}</label>`).join('')}</div>
+        <div class="cart-coupon-row"><button type="button" class="btn btn-dark" id="couponConfirmBtn" style="width:100%;justify-content:center">Confirmar produto</button></div>
+        <button type="button" id="couponCancelBtn" class="coupon-cancel-link">Cancelar</button></div>`;
+    } else if(applied){
+      couponBlock=`<div class="cart-coupon"><p class="cc-label">Cupom aplicado</p><div class="cart-coupon-row"><span class="coupon-applied-chip">${escapeHTML(applied.code)} · -${applied.percent}% em "${escapeHTML(applied.itemName)}"</span><button type="button" id="couponRemoveBtn">Remover</button></div></div>`;
+    } else {
+      couponBlock=`<div class="cart-coupon"><p class="cc-label">Cupom promocional</p><div class="cart-coupon-row"><input id="couponInput" placeholder="Código do cupom" maxlength="30" autocapitalize="characters"><button type="button" id="couponApplyBtn">Aplicar</button></div><div id="couponMsg"></div></div>`;
+    }
+  }
+
+  const body=c.length
+    ? lines+couponBlock+`<div class="modal-total"><span>Total</span><b>${money(total)}</b></div><button class="btn btn-gold" id="checkoutBtn" type="button">Finalizar pedido</button><a class="btn btn-dark" style="margin-top:10px" href="pedidos.html">Ver pedidos feitos</a>`
+    : `<div class="empty-state"><div class="empty-mark">Donna</div><h3>Sua sacola está vazia.</h3><p>Escolha uma peça para começar.</p><a class="btn btn-dark" href="index.html#colecoes">Fazer pedido agora</a></div>`;
+
   modal(`<p class="eyebrow">Minha sacola</p><h2>Seus itens</h2>${body}`);
+  wireCartModal();
+}
+
+function wireCartModal(){
+  $('#couponApplyBtn')?.addEventListener('click',()=>{
+    const input=$('#couponInput'); const res=findCoupon(input.value);
+    const msgEl=$('#couponMsg');
+    if(!res.ok){
+      const map={invalid:'Este cupom não está disponível. Verifique o código digitado ou escolha uma condição promocional válida.',used:'Este cupom já foi utilizado neste navegador e não pode ser usado novamente.',expired:'Este cupom expirou e não está mais disponível.'};
+      msgEl.outerHTML=cartCouponMsg(map[res.reason]||map.invalid,'err');
+      return;
+    }
+    const c=getCart();
+    if(c.length===1){
+      setAppliedCoupon({code:res.coupon.code,percent:res.coupon.percent,itemIndex:0,itemName:c[0].name});
+      toast('Cupom aplicado com sucesso.');
+      renderCartModal();
+    } else {
+      _pendingCoupon={code:res.coupon.code,percent:res.coupon.percent};
+      renderCartModal();
+    }
+  });
+  $('#couponConfirmBtn')?.addEventListener('click',()=>{
+    const picked=$('input[name="couponPick"]:checked');
+    if(!picked){ toast('Selecione um produto para aplicar o cupom.'); return; }
+    const c=getCart(); const idx=Number(picked.value);
+    setAppliedCoupon({code:_pendingCoupon.code,percent:_pendingCoupon.percent,itemIndex:idx,itemName:c[idx].name});
+    _pendingCoupon=null;
+    toast('Cupom aplicado com sucesso.');
+    renderCartModal();
+  });
+  $('#couponCancelBtn')?.addEventListener('click',()=>{ _pendingCoupon=null; renderCartModal(); });
+  $('#couponRemoveBtn')?.addEventListener('click',()=>{ setAppliedCoupon(null); renderCartModal(); });
+
   $('#checkoutBtn')?.addEventListener('click',()=>{
     let c=getCart(); if(!c.length)return;
+    const applied=getAppliedCoupon();
     let orders=[];try{orders=JSON.parse(localStorage.getItem('db_orders')||'[]')}catch{}
-    const id='DB-'+Date.now().toString().slice(-6),total=c.reduce((a,x)=>a+x.price*x.qty,0);
-    orders.unshift({id,date:new Date().toLocaleString('pt-BR'),items:c,total,status:'Recebido'});localStorage.setItem('db_orders',JSON.stringify(orders));localStorage.removeItem('db_cart');updateCart();closeModal();
+    let total=0; c.forEach((x,i)=>{ const base=x.price*x.qty; total += (applied&&applied.itemIndex===i) ? base*(1-applied.percent/100) : base; });
+    const id='DB-'+Date.now().toString().slice(-6);
+    orders.unshift({id,date:new Date().toLocaleString('pt-BR'),items:c,total,coupon:applied?applied.code:null,status:'Recebido'});
+    localStorage.setItem('db_orders',JSON.stringify(orders));
+    if(applied){ markCouponUsed(applied.code); setAppliedCoupon(null); }
+    localStorage.removeItem('db_cart'); _pendingCoupon=null; updateCart(); closeModal();
     const text=encodeURIComponent(`Olá, DonnaBella! Quero finalizar o pedido ${id}. Total: ${money(total)}.`);
     window.open(DB.whatsapp+'?text='+text,'_blank'); toast('Pedido registrado. Abrimos o WhatsApp para finalizar.');
   });
 }
+function openCart(){ _pendingCoupon=null; renderCartModal(); }
 function setupHero(){
   const track=$('#heroTrack'); if(!track)return;
   let i=0; const slides=[...track.children],dots=$('#heroDots');
@@ -328,20 +418,30 @@ function setupShowcases(){
   $$('.dbx-section .dbx-carousel').forEach(setupDbxCarousel);
   $$('.riviera-section .dbx-carousel').forEach(setupRiviera);
 }
-function rollWeightedCoupon(){
-  const r=Math.random()*100; let acc=0, tier=DB.couponTiers[0];
-  for(const t of DB.couponTiers){ acc+=t.weight; if(r<=acc){ tier=t; break; } }
-  return tier.coupons[Math.floor(Math.random()*tier.coupons.length)];
-}
+function pickRouletteCoupon(){ return DB.coupons[Math.floor(Math.random()*DB.coupons.length)]; }
 function getGameState(){
-  let s=Store.get('db_game',{nextAvailable:0,spinsLeft:1,sharesUsed:0});
-  if(Date.now()>=s.nextAvailable){ s={nextAvailable:0,spinsLeft:1,sharesUsed:0}; Store.set('db_game',s); }
+  let s; try{s=JSON.parse(localStorage.getItem('db_game')||'null')}catch{s=null}
+  if(!s) s={nextAvailable:0,spinsLeft:2};
+  if(Date.now()>=s.nextAvailable){ s={nextAvailable:0,spinsLeft:2}; localStorage.setItem('db_game',JSON.stringify(s)); }
   return s;
 }
-function saveGameState(s){ Store.set('db_game',s); }
+function saveGameState(s){ localStorage.setItem('db_game',JSON.stringify(s)); }
 function fmtRemaining(ms){
   const s=Math.max(0,Math.floor(ms/1000)); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);
   return `${h}h ${m}min`;
+}
+function shareCurrentPage(){
+  const title='DonnaBella';
+  const onProduct=/\/?produto(-[\w-]+)?\.html$/.test(location.pathname);
+  const text=onProduct?'Olha essa peça da DonnaBella que encontrei — achei linda!':'Descobri a DonnaBella — joias e acessórios elegantes. Dá uma olhada!';
+  return {title,text,url:location.href};
+}
+async function doShare(btnEl){
+  const data=shareCurrentPage();
+  try{
+    if(navigator.share){ await navigator.share(data); }
+    else { await navigator.clipboard.writeText(data.url); toast('Link copiado com sucesso.'); }
+  }catch(e){ /* cliente cancelou o compartilhamento — nenhuma ação necessária */ }
 }
 function setupMinigame(){
   const btn=$('#mgSpinBtn'); if(!btn) return;
@@ -353,30 +453,18 @@ function setupMinigame(){
   function renderStatus(){
     const s=getGameState();
     if(s.spinsLeft>0){
-      statusEl.textContent=`Giros disponíveis hoje: ${s.spinsLeft}`;
+      statusEl.textContent=`Giros disponíveis hoje: ${s.spinsLeft} de 2`;
       btn.disabled=false;
     } else {
-      statusEl.textContent=`Você já girou por hoje. Próximo giro em ${fmtRemaining(s.nextAvailable-Date.now())}.`;
+      statusEl.textContent=`Você já usou seus giros de hoje. Próximo giro em ${fmtRemaining(s.nextAvailable-Date.now())}.`;
       btn.disabled=true;
     }
-    shareMsgEl.textContent = s.sharesUsed<3
-      ? `Compartilhe e gire: cada compartilhamento vale +1 giro (restam ${3-s.sharesUsed} de 3).`
-      : `Limite de 3 compartilhamentos por dia atingido.`;
-    shareBtn.disabled = s.sharesUsed>=3;
+    if(shareMsgEl) shareMsgEl.textContent='Compartilhe a DonnaBella com uma amiga.';
   }
   renderStatus();
   setInterval(renderStatus,30000);
 
-  shareBtn?.addEventListener('click',async()=>{
-    const s=getGameState(); if(s.sharesUsed>=3) return;
-    const shareData={title:'DonnaBella',text:'Descobri a DonnaBella e o mini jogo de cupons deles — dá uma olhada!',url:location.origin+location.pathname.replace(/index\.html$/,'')};
-    try{
-      if(navigator.share){ await navigator.share(shareData); }
-      else { await navigator.clipboard.writeText(shareData.url); toast('Link copiado! Envie para uma amiga.'); }
-      s.sharesUsed++; s.spinsLeft++; saveGameState(s); renderStatus();
-      toast('Giro extra liberado! 🎁');
-    }catch(e){ /* usuária cancelou o compartilhamento */ }
-  });
+  shareBtn?.addEventListener('click',()=>doShare(shareBtn));
 
   function resetScene(){
     $$('.mg-bag',shelf).forEach(b=>b.classList.remove('active'));
@@ -407,11 +495,14 @@ function setupMinigame(){
         ticket.classList.add('show');
         setTimeout(()=>{
           hand.classList.remove('show'); hand.classList.add('retreat');
-          const [code,pct]=rollWeightedCoupon();
-          codeEl.textContent=code;
-          textEl.textContent=`Parabéns! A sacola número ${n} trouxe um cupom surpresa.`;
-          msg.dataset.code=code;
-          msg.querySelector('#mgMsgSub')&&(msg.querySelector('#mgMsgSub').textContent=`${pct}% OFF · obrigada por jogar com a gente ✦`);
+          const prize=pickRouletteCoupon();
+          const alreadyUsed=prize.usage==='once'&&isCouponUsed(prize.code);
+          codeEl.textContent=prize.code;
+          textEl.textContent=alreadyUsed
+            ? `A sacola número ${n} trouxe o cupom ${prize.code} — mas ele já foi usado neste navegador.`
+            : `Parabéns! A sacola número ${n} trouxe um cupom surpresa.`;
+          msg.dataset.code=prize.code;
+          msg.querySelector('#mgMsgSub')&&(msg.querySelector('#mgMsgSub').textContent=`${prize.percent}% OFF · obrigada por jogar com a gente ✦`);
           msg.classList.add('show');
           const st=getGameState(); st.spinsLeft=Math.max(0,st.spinsLeft-1);
           if(st.spinsLeft<=0) st.nextAvailable=Date.now()+24*3600*1000;
@@ -429,9 +520,9 @@ function setupMinigame(){
   });
   $('#mgSaveCoupon')?.addEventListener('click',()=>{
     const code=msg.dataset.code; if(!code) return;
-    let saved=JSON.parse(localStorage.getItem('db_saved_coupons')||'[]');
+    let saved=[];try{saved=JSON.parse(localStorage.getItem('db_saved_coupons')||'[]')}catch{}
     if(!saved.includes(code)){ saved.push(code); localStorage.setItem('db_saved_coupons',JSON.stringify(saved)); }
-    toast('Cupom guardado! Veja em Cupons disponíveis.');
+    toast('Cupom guardado! Aplique-o na sua sacola quando quiser.');
   });
 }
 function setupGlobal(){
