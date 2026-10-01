@@ -8,16 +8,21 @@ const DB={
   whatsapp:'https://wa.me/message/NK42IOHQYX3LF1',
   socials:{
     instagram:'https://www.instagram.com/amodonnabella?igsh=YXNvNWd6cWNpeDZ6&utm_source=qr',
-    tiktok:'https://www.tiktok.com/@amodonnabella?_r=1',
+    tiktok:'https://www.tiktok.com/@donnabellamalf?_r=1&_t=ZS-99qM2kMPKgy',
     facebook:''
   },
   products:[
     {id:'oculos-sunset-bella',name:'Óculos Sunset Bella',price:69.90,oldPrice:289.90,category:'Óculos',img:'assets/img/oculos-sunset-bella-1.jpg',desc:'Armação em acetato translúcido rosé com ferragem dourada. Lentes polarizadas, com proteção UV400 e UVB.',material:'Acetato translúcido rosé, ferragem dourada, lentes polarizadas',care:'Guarde no case ao não usar. Limpe as lentes apenas com pano de microfibra seco ou levemente umedecido.',url:'produto-oculos-sunset-bella.html'},
     {id:'brinco-coracao',name:'Brinco Coração',price:59.90,category:'Brincos',img:'assets/img/brinco-coracao.jpg',desc:'Brinco de pressão em formato de coração, cravejado com cristais. Peça delicada, com fecho seguro para uso diário.',material:'Metal folheado, cristais',care:'Evite contato com perfume e água em excesso. Guarde em local seco.'},
-    {id:'brinco-bella-02',name:'Brinco Bella 02',price:79.90,category:'Brincos',img:'assets/img/brinco-2.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
-    {id:'brinco-signature-03',name:'Brinco Signature 03',price:99.90,category:'Brincos',img:'assets/img/brinco-3.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
+    {id:'brinco-bella-02',name:'Brinco Bella 02',price:79.90,category:'Brincos',img:'assets/img/brinco-coracao.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
+    {id:'brinco-signature-03',name:'Brinco Signature 03',price:99.90,category:'Brincos',img:'assets/img/brinco-coracao.jpg',desc:'Cadastre o produto, descrição e valor.',material:'',care:''},
     {id:'colar-classica',name:'Colar Clássica',price:48.90,category:'Colares',img:'assets/img/gargantilha-cristais.jpg',desc:'Colar da linha Clássica, cristais lapidados em corrente delicada. Peça atemporal para uso diário ou ocasiões especiais.',material:'Metal folheado, cristais lapidados',care:'Evite contato com perfume e água em excesso. Guarde em local seco, separado de outras peças.'},
-    {id:'pingente-classica',name:'Pingente Clássica',price:29.99,category:'Colares',img:'assets/img/pingente-classica.jpg',desc:'Pingente da linha Clássica, para compor com correntes DonnaBella ou usar com a sua própria.',material:'Metal folheado',care:'Evite contato com perfume e água em excesso. Guarde em local seco.'}
+    {id:'pingente-classica',name:'Pingente Clássica',price:29.99,category:'Colares',img:'assets/img/conjunto-cristais-completo.jpg',desc:'Pingente da linha Clássica, para compor com correntes DonnaBella ou usar com a sua própria.',material:'Metal folheado',care:'Evite contato com perfume e água em excesso. Guarde em local seco.'},
+    {id:'oculos-bull',name:'Óculos Bull',price:74.90,category:'Óculos',img:'assets/img/oculos-bull-1.jpg',gallery:['assets/img/oculos-bull-1.jpg','assets/img/oculos-bull-2.jpg','assets/img/oculos-bull-3.jpg','assets/img/oculos-bull-4.jpg'],desc:'Armação em acetato translúcido, lente colorida, design arredondado e sofisticado.',safety:'Lentes polarizadas, com proteção UV400 e UVB. Reduzem o reflexo da luz e ajudam a proteger os olhos em exposição prolongada ao sol, com mais conforto e nitidez ao longo do dia.',care:'Para preservar o brilho da armação por mais tempo, muitas das nossas clientes preferem guardar o óculos em um estojo de couro — protege contra riscos e quedas no dia a dia.'},
+    {id:'oculos-everest',name:'Óculos Evereste',price:44.90,category:'Óculos',img:'assets/img/oculos-everest-1.jpg',gallery:['assets/img/oculos-everest-1.jpg','assets/img/oculos-everest-2.jpg','assets/img/oculos-everest-3.jpg','assets/img/oculos-everest-4.jpg'],desc:'Armação em acetato escuro, lente em degradê, design redondo com acabamento em metal dourado.',safety:'Lentes polarizadas, com proteção UV400 e UVB. Reduzem o reflexo da luz e ajudam a proteger os olhos em exposição prolongada ao sol, com mais conforto e nitidez ao longo do dia.',care:'Para preservar o brilho da armação por mais tempo, muitas das nossas clientes preferem guardar o óculos em um estojo de couro — protege contra riscos e quedas no dia a dia.'},
+    {id:'oculos-niagara-amendoado',name:'Óculos Niágara Amendoado',price:56.90,category:'Óculos',img:'assets/img/oculos-niagara-amendoado-1.jpg',gallery:['assets/img/oculos-niagara-amendoado-1.jpg','assets/img/oculos-niagara-amendoado-2.jpg','assets/img/oculos-niagara-amendoado-3.jpg','assets/img/oculos-niagara-amendoado-4.jpg'],desc:'Armação em tom amendoado, lente escura, silhueta gatinho com acabamento brilhante.',safety:'Lentes polarizadas, com proteção UV400 e UVB. Reduzem o reflexo da luz e ajudam a proteger os olhos em exposição prolongada ao sol, com mais conforto e nitidez ao longo do dia.',care:'Para preservar o brilho da armação por mais tempo, muitas das nossas clientes preferem guardar o óculos em um estojo de couro — protege contra riscos e quedas no dia a dia.'},
+    {id:'oculos-glacier-paradise',name:'Óculos Glacier Paradise',price:49.90,category:'Óculos',img:'assets/img/oculos-glacier-paradise-1.jpg',gallery:['assets/img/oculos-glacier-paradise-1.jpg','assets/img/oculos-glacier-paradise-2.jpg','assets/img/oculos-glacier-paradise-3.jpg','assets/img/oculos-glacier-paradise-4.jpg'],desc:'Armação translúcida, lente em degradê, formato oval clássico com toque contemporâneo.',safety:'Lentes polarizadas, com proteção UV400 e UVB. Reduzem o reflexo da luz e ajudam a proteger os olhos em exposição prolongada ao sol, com mais conforto e nitidez ao longo do dia.',care:'Para preservar o brilho da armação por mais tempo, muitas das nossas clientes preferem guardar o óculos em um estojo de couro — protege contra riscos e quedas no dia a dia.'},
+    {id:'oculos-bull-picchu',name:'Óculos Bull Picchu',price:84.90,category:'Óculos',img:'assets/img/oculos-bull-picchu-1.jpg',gallery:['assets/img/oculos-bull-picchu-1.jpg','assets/img/oculos-bull-picchu-2.jpg','assets/img/oculos-bull-picchu-3.jpg','assets/img/oculos-bull-picchu-4.jpg'],desc:'Armação preta fosca em formato geométrico, lente transparente, acabamento premium.',safety:'Lentes polarizadas, com proteção UV400 e UVB. Reduzem o reflexo da luz e ajudam a proteger os olhos em exposição prolongada ao sol, com mais conforto e nitidez ao longo do dia.',care:'Para preservar o brilho da armação por mais tempo, muitas das nossas clientes preferem guardar o óculos em um estojo de couro — protege contra riscos e quedas no dia a dia.'}
   ]
 };
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -288,11 +293,6 @@ function setupLiveChat(){
   });
 }
 function getProductById(id){return DB.products.find(p=>p.id===id);}
-function applyCoupon(code,price){
-  const found=DB.coupons.find(([c])=>c.toUpperCase()===String(code).trim().toUpperCase());
-  if(!found) return null;
-  const [,pct]=found; return {pct,newPrice:Math.round(price*(1-pct/100)*100)/100};
-}
 function setupProductPage(){
   const mount=$('#productPage'); if(!mount) return;
   const id=new URLSearchParams(location.search).get('id');
@@ -305,12 +305,14 @@ function setupProductPage(){
   $('#crumbCategory')&&($('#crumbCategory').textContent=p.category||'Produto');
   const off=p.oldPrice?Math.round((1-p.price/p.oldPrice)*100):null;
   mount.innerHTML=`<div class="pd-grid">
-    <div class="pd-media">${off?`<span class="pd-badge-off">-${off}% OFF</span>`:''}<img src="${p.img}" alt="${escapeHTML(p.name)}"></div>
+    <div class="pd-media">${off?`<span class="pd-badge-off">-${off}% OFF</span>`:''}<img src="${p.img}" alt="${escapeHTML(p.name)}" id="pdMainImg"></div>
     <div class="pd-info">
+      ${p.gallery&&p.gallery.length>1?`<div class="pd-thumbs">${p.gallery.map((g,i)=>`<button type="button" class="pd-thumb${i===0?' active':''}" data-img="${g}"><img src="${g}" alt="${escapeHTML(p.name)} — foto ${i+1}"></button>`).join('')}</div>`:''}
       <p class="eyebrow">${escapeHTML(p.category||'DonnaBella')}</p>
       <h1>${escapeHTML(p.name)}</h1>
       <div class="pd-price-row">${p.oldPrice?`<span class="pd-old-price">${money(p.oldPrice)}</span>`:''}<span class="pd-price">${money(p.price)}</span></div>
       <p class="pd-desc">${escapeHTML(p.desc||'Cadastre a descrição deste produto.')}</p>
+      ${p.safety?`<p class="pd-desc pd-safety">${escapeHTML(p.safety)}</p>`:''}
       ${p.material?`<div class="pd-spec"><b>Material</b><span>${escapeHTML(p.material)}</span></div>`:''}
       ${p.care?`<div class="pd-spec"><b>Cuidados</b><span>${escapeHTML(p.care)}</span></div>`:''}
       <div class="pd-actions">
@@ -320,11 +322,17 @@ function setupProductPage(){
       </div>
       <div class="pd-coupon">
         <p>Tenho um cupom</p>
-        <div class="pd-coupon-row"><input id="pdCouponInput" placeholder="Ex: DONNA10" maxlength="20"><button id="pdCouponBtn" type="button">Aplicar</button></div>
+        <div class="pd-coupon-row"><input id="pdCouponInput" placeholder="Ex: ANDREIA60" maxlength="20"><button id="pdCouponBtn" type="button">Aplicar</button></div>
         <div class="pd-coupon-msg" id="pdCouponMsg"></div>
       </div>
     </div>
   </div>`;
+
+  $$('.pd-thumb').forEach(t=>t.addEventListener('click',()=>{
+    $('#pdMainImg').src=t.dataset.img;
+    $$('.pd-thumb').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  }));
 
   $('#pdAddCart').addEventListener('click',()=>{
     let c=getCart(),it=c.find(x=>x.name===p.name);
@@ -338,9 +346,12 @@ function setupProductPage(){
   });
   $('#pdCouponBtn').addEventListener('click',()=>{
     const val=$('#pdCouponInput').value; const msg=$('#pdCouponMsg');
-    const res=applyCoupon(val,p.price);
-    if(res){ msg.className='pd-coupon-msg ok'; msg.textContent=`Cupom válido: -${res.pct}% • novo valor ${money(res.newPrice)}`; }
-    else { msg.className='pd-coupon-msg err'; msg.textContent='Cupom inválido ou expirado.'; }
+    const res=findCoupon(val);
+    if(res.ok){ msg.className='pd-coupon-msg ok'; msg.textContent=`Cupom válido: -${res.coupon.percent}% • aplique na sua sacola para confirmar.`; }
+    else {
+      const map={invalid:'Este cupom não está disponível. Verifique o código digitado ou escolha uma condição promocional válida.',used:'Este cupom já foi utilizado neste navegador e não pode ser usado novamente.',expired:'Este cupom expirou e não está mais disponível.'};
+      msg.className='pd-coupon-msg err'; msg.textContent=map[res.reason]||map.invalid;
+    }
   });
 
   setupFavorites();
